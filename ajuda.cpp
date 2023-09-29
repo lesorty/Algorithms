@@ -14,20 +14,10 @@ using namespace std;
 vector<vector<char>> matrix; 
 bool flag;
 
-void dfs(vector<vector<bool>>& vis,vector<pair<ll,ll>>& nodes, ll x, ll y, ll dx, ll dy){
-    if((x+dx > 0) && (x+dx < vis.size())){
-        if((y+dy > 0) && y+dy < vis[0].size()){
-            // cout << "dx " << dx << " dy " << dy << endl;
-            // cout << x+dx << " " << y+dy << " node " << matrix[x+dx][y] << endl;
-            if(matrix[x+dx][y+dy] != '*' && !vis[x+dx][y+dy]){
-                // cout << "Node " << x << " " << y << " entrou não é um *" << endl;
-                vis[x+dx][y+dy] = true;
-                nodes.pb({x+dx,y+dy});
-                dfs(vis, nodes, (x+dx), (y+dy), dx, dy);
-            }
-        }
-    }  
-}
+// calcular a distancia de cada vertice e todos os outros
+// pegar o grau dos vertices para saber se um vertice é folha ou não, é sempre otimo tirar um vertice folha da arvore
+// ordernar pela distancia cada par de vertice, ou seja manter algo como uma priority queue do tipo (distancia, v1,v2)
+
 
 int main(){
     
