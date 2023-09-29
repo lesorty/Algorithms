@@ -57,6 +57,15 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "files.associations": {
     "iostream": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "vector": "cpp",
+    "*.tcc": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "unordered_set": "cpp"
   }
 }

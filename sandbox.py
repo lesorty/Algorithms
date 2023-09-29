@@ -1,32 +1,31 @@
-mod = (10**9) + 7
-s = input()
-a = 0
-t = False
-soma = 0
-validos = []
+a,b = [int(x) for x in input().split()]
+flag = False
+ans = []
 
-for i in range(len(s)):
-    if s[i] == "a":
-        a += 1
-        t = False
-    elif s[i] == "b":
-        if i > 0 and t == False:
-            validos.append(a)
-        t = True
+for i in range(10):
+    if flag: break
+    ans = [a] 
+    soma = a
+    for j in range(i):
+        soma = (10*soma) + 1
+        ans.append(soma)
+        if soma == b:
+            flag = True
+            break
+        if soma > b:
+            break
+    if flag: break
+    while soma < b:
+        soma *= 2
+        ans.append(soma)
+        if soma == b:
+            flag = True
+            break
 
 
-if not t:
-    validos.append(a)
-
-# valicum = [0]*len(validos)
-
-# valicum[0] = validos[0]
-# for i in range(1,len(validos)):
-#     valicum[i] = validos[i] + valicum[i-1]
-
-for i in range(len(validos)-1, -1,-1):
-    soma += validos[i] * (len(validos) - i)
-
-print(soma)
-print(validos)
-# print(valicum)
+if flag:
+    print("YES")
+    print(len(ans))
+    print(*ans,sep= " ")
+else:
+    print("NO")
