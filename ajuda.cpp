@@ -1,25 +1,18 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+#include <queue>
 
-#define ll long long
-#define pll pair<long long, long long>
-#define vll vector<long long>
-#define pb push_back
-#define endl "\n"
-#define eb emplace_back  
+int main() {
+    std::priority_queue<int> pq;
 
-#include <bits/stdc++.h>
-using namespace std;
+    // Inserindo elementos na priority_queue
+    pq.push(30);
+    pq.push(10);
+    pq.push(50);
 
-vector<vector<char>> matrix; 
-bool flag;
+    // Acessando o valor no topo
+    int valorNoTopo = pq.top();
 
-// calcular a distancia de cada vertice e todos os outros
-// pegar o grau dos vertices para saber se um vertice é folha ou não, é sempre otimo tirar um vertice folha da arvore
-// ordernar pela distancia cada par de vertice, ou seja manter algo como uma priority queue do tipo (distancia, v1,v2)
+    std::cout << "Valor no topo: " << valorNoTopo << std::endl;
 
-
-int main(){
-    
+    return 0;
 }
- 
