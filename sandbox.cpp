@@ -1,70 +1,71 @@
-    #include <bits/stdc++.h>
-    using namespace std;
+#include <bits/stdc++.h>
+using namespace std;
 
-    #define ll long long
-    #define pll pair<long long, long long>
-    #define vll vector<long long>
-    #define pb push_back
-    #define endl "\n"
-    #define eb emplace_back  
-
-    #include <bits/stdc++.h>
-    using namespace std;
+#define ll long long
+#define vll vector<long long>
+#define mll map<long, long>
+#define pb push_back
+#define endl "\n"
 
 
+void dijkstra(ll node, vector<vector<pair<ll,ll>>> adj, vector<ll> &dist){
+    set<pair<ll,ll>> fila;
+    fila.insert({0,node});
+    dist[node] = 0;
 
+    while(!fila.empty()){
+        pair<ll,ll> topo = *fila.begin();
+        fila.erase(topo);
+        ll node = topo.second;
+        ll dnode = topo.first;
 
-    bool isbipartide(vector<vector<ll>> adjacents, vector<ll> colors, ll start){
-        queue<ll> fila;
-        fila.emplace(start);
-        colors[start] = 1;
+        if(dist[node] != dnode) continue;
 
-        while(!fila.empty()){
-            ll topo = fila.front();
-            fila.pop();
-            for(auto vis : adjacents[topo]){
-                if(colors[vis] == colors[topo]) return false;
-                else if(colors[vis] == 0) {
-                    fila.emplace(vis);
-                    colors[vis] = (colors[topo] == 1) ? 2 : 1;
-
-                }
-            }
+        for(auto c : adj[node]){
+            ll newdist = dnode + c.first;
+            ll adjnode = c.second;
+            if(newdist < dist[adjnode]){
+                dist[adjnode] = newdist;
+                fila.insert({newdist, adjnode});
+            }   
         }
-        for (ll i = 1; i < colors.size(); i++) {
-            if(colors[i] == 0){
-                if(!isbipartide(adjacents, colors, i)) return false;
-            }
+    }
+}
+
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    ll n,m; cin >> n >> m;
+    vector<vector<pair<ll,ll>>> adj(n+1);
+    vector<vector<pair<ll,ll>>> adjinvert(n+1);
+    vector<ll> dinit(n+1, LONG_LONG_MAX);
+    vector<ll> df(n+1, LONG_LONG_MAX);
+    vector<vector<ll>> arestas;
+    
+    for (ll i = 0; i < m; i++) {
+        ll x, y,z; cin >> x >> y >> z;
+        arestas.pb({z,x,y});
+        adj[x].pb({z,y});
+        adjinvert[y].pb({z,x});
+    }   
+
+    dijkstra(1,adj,dinit);
+    dijkstra(n, adjinvert, df);
+
+    ll soma = LONG_LONG_MAX;
+    for(auto aresta : arestas){
+        ll daresta = aresta[0];
+        ll iaresta = aresta[1];
+        ll faresta = aresta[2];
+        if(dinit[iaresta] != LONG_LONG_MAX && df[faresta] != LONG_LONG_MAX){
+            ll costaresta = dinit[iaresta] + df[faresta] + (daresta/2) ;
+            soma = min(soma , costaresta);
         }
-        return true;
     }
 
-    int main() {
-        ll t; cin >> t;
+    cout << soma << endl;
 
-        while(t--){
-            ll n; cin >> n;
-            vector<vector<ll>> adj(n+1);
-            vector<ll> color(n+1);
-            adj.assign(n+1,{});
-            color.assign(n+1, 0);
-            bool flag = false;
-
-            for (ll i = 0; i < n; i++) {
-                ll x, y; cin >> x >> y;
-                if(x == y){
-                    flag = true;
-                }
-                adj[x].pb(y);
-                adj[y].pb(x);
-            }
-
-            if(flag) cout << "NO" << endl;
-            else{
-            string ans = (isbipartide(adj, color, 1) == true) ? "YES" : "NO";
-            cout << ans << endl;
-            }
-        }
-
-        return 0;
-    }
+    return 0;
+}

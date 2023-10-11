@@ -1,21 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/* clang-format off */
-
-/* TYPES  */
 #define ll long long
-#define pii pair<int, int>
-#define pll pair<long long, long long>
-#define vi vector<int>
 #define vll vector<long long>
-#define mii map<int, int>
-#define si set<int>
-#define sc set<char>
-
-/* FUNCTIONS */
+#define mll map<long, long>
 #define pb push_back
-#define eb emplace_back
+
+set<pair<ll,ll>> fila;
+
+// FUNC dijkstra 
+void dijkstra(ll node, vector<vector<pair<ll,ll>>> adj, vector<ll> &dist){
+    set<pair<ll,ll>> fila;
+    fila.insert({0,node});
+    dist[node] = 0;
+
+    while(!fila.empty()){
+        pair<ll,ll> topo = *fila.begin();
+        fila.erase(topo);
+        ll node = topo.second;
+        ll dnode = topo.first;
+
+        if(dist[node] != dnode) continue;
+
+        for(auto c : adj[node]){
+            ll newdist = dnode + c.first;
+            ll adjnode = c.second;
+            if(newdist < dist[adjnode]){
+                dist[adjnode] = newdist;
+                fila.insert({newdist, adjnode});
+            }   
+        }
+    }
+}
 
 int main() {
     ll n, m; cin >> n >> m;
@@ -28,7 +44,7 @@ int main() {
 
     for (ll i = 0; i < m; i++) {
         ll x, y, z; cin >> x >> y >> z;
-         adj[x].pb({z,y});
+        adj[x].pb({z,y});
         adj[y].pb({z,x});
     }
 
