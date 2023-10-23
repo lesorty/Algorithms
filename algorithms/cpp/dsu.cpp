@@ -15,7 +15,7 @@ using namespace std;
 
 
 vector<ll> pai;
-vector<ll> size;
+vector<ll> tamanho;
 
 ll findset(ll i){
     if(pai[i] == i) return i;
@@ -26,47 +26,43 @@ void unionsets(ll a, ll b){
     a = findset(a);
     b = findset(b);
     if(a == b) return;
-    if(size[a] > size[b]) swap(a,b);
+    if(tamanho[a] > tamanho[b]) swap(a,b);
     pai[a] = b;
-    size[b] += size[a];
+    tamanho[b] += tamanho[a];
 }
 
 int main() {
 
-    while(true){
-        ll n, m; cin >> n >> m;
-        if(n==0 && m==0) break;
+    ll n, m; cin >> n >> m;
+    vector<vector<ll>> arestas;
+    pai.assign(n+1,0);
+    tamanho.assign(n+1,1);
+    ll qualification[n+1];
+    bool conectados[n+1];
 
-        set<vector<ll>> arestas;
-        pai.assign(n+1,0);
-        size.assign(n+1,1);
-        ll soma = 0;
+    for (ll i = 0; i < n+1; i++) pai[i] = i;
+    for (ll i = 1; i < n+1; i++) cin >> qualification[i];
 
-        for (ll i = 0; i < n+1; i++) {
-            pai[i] = i;
-        }
-
-        for (ll i = 0; i < m; i++) {
-            ll x, y, z; cin >> x >> y >> z;
-            arestas.insert(vector<ll>{z,x,y});
-            soma += z;
-        }
-
-        while(!arestas.empty()){
-            vector<ll> ar = *arestas.begin();
-            ll peso = ar[0];
-            ll a = ar[1];
-            ll b = ar[2];
-            arestas.erase(ar);
-
-            if(findset(a) != findset(b)){
-                soma -= peso;
-                unionsets(a,b);
-            }
-        }
-        cout << soma << endl;
-
+    for (ll i = 0; i < m; i++) {
+        ll x, y, z; cin >> x >> y >> z;
+        arestas.pb({z,x,y});
     }
+
+    sort(arestas.begin(), arestas.end());
+
+    ll out = 0;
+    for (ll i = 0; i < m; i++) {
+        vector<ll> ar = arestas[i];
+        ll peso = ar[0];
+        ll a = ar[1];
+        ll b = ar[2];
+
+        if(findset(a) != findset(b)){
+            out += peso;
+            conectados[b] = true;
+            unionsets(a,b);
+        }
+    }   
 
 
 }

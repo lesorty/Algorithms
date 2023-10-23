@@ -1,18 +1,28 @@
+#include <algorithm>
 #include <iostream>
-#include <queue>
+#include <set>
+#include <vector>
+using namespace std;
 
 int main() {
-    std::priority_queue<int> pq;
+	int n, k;
+	cin >> n >> k;
+	vector<pair<int, int>> v(n);
+	for (int i = 0; i < n; i++)  
+		cin >> v[i].second >> v[i].first;
+	sort(begin(v), end(v));
 
-    // Inserindo elementos na priority_queue
-    pq.push(30);
-    pq.push(10);
-    pq.push(50);
+	int maxMovies = 0;
+	multiset<int> end_times;
+	for (int i = 0; i < k; ++i) end_times.insert(0);
 
-    // Acessando o valor no topo
-    int valorNoTopo = pq.top();
+	for (int i = 0; i < n; i++) {
+		auto it = end_times.upper_bound(v[i].second);
+		if (it == begin(end_times)) continue;
+		end_times.erase(--it);
+		end_times.insert(v[i].first);
+		++maxMovies;
+	}
 
-    std::cout << "Valor no topo: " << valorNoTopo << std::endl;
-
-    return 0;
+	cout << maxMovies;
 }

@@ -1,71 +1,74 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+//t2
 #define ll long long
 #define vll vector<long long>
 #define mll map<long, long>
 #define pb push_back
 #define endl "\n"
 
+bool usados[10] = {false};
+ll soma = 0;
+ll k;
+bool flag = false;
+vector<ll> ans;
 
-void dijkstra(ll node, vector<vector<pair<ll,ll>>> adj, vector<ll> &dist){
-    set<pair<ll,ll>> fila;
-    fila.insert({0,node});
-    dist[node] = 0;
-
-    while(!fila.empty()){
-        pair<ll,ll> topo = *fila.begin();
-        fila.erase(topo);
-        ll node = topo.second;
-        ll dnode = topo.first;
-
-        if(dist[node] != dnode) continue;
-
-        for(auto c : adj[node]){
-            ll newdist = dnode + c.first;
-            ll adjnode = c.second;
-            if(newdist < dist[adjnode]){
-                dist[adjnode] = newdist;
-                fila.insert({newdist, adjnode});
-            }   
+void solve(vector<ll> &arr, ll ni,ll ai){
+    soma += arr[ni]*ai;
+    if(soma > k) {
+        // cout << "soma maior" << endl;
+        soma -= arr[ni]*ai;
+        return;
+        }
+    // cout << "entrou no solve " << ni << " " << ai << endl << endl;
+    usados[ai] = true;
+    if(ai == 9){
+        if(soma == k){
+            // cout << "achou a soma" << endl;
+            flag = true;
+            ans.pb(ai);
+        }
+        soma -= arr[ni]*ai;
+        usados[ai] = false;
+        return;
+    }
+    for (ll i = 0; i < 10; i++) {
+        if(!usados[i]) solve(arr, ni+1, i);
+        if(flag){
+            ans.pb(i);
+            usados[ai] = false;
+            return;
         }
     }
+    soma -= arr[ni]*ai;
+    usados[ai] = false;
+    return;
+
 }
 
-
 int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
-    ll n,m; cin >> n >> m;
-    vector<vector<pair<ll,ll>>> adj(n+1);
-    vector<vector<pair<ll,ll>>> adjinvert(n+1);
-    vector<ll> dinit(n+1, LONG_LONG_MAX);
-    vector<ll> df(n+1, LONG_LONG_MAX);
-    vector<vector<ll>> arestas;
-    
-    for (ll i = 0; i < m; i++) {
-        ll x, y,z; cin >> x >> y >> z;
-        arestas.pb({z,x,y});
-        adj[x].pb({z,y});
-        adjinvert[y].pb({z,x});
-    }   
+    ll ntc; cin >> ntc;
+    while(ntc--){
+        flag = false;
+        ans.clear();
+        vector<ll> arr(10);
+        for (ll i = 0; i < 10; i++) cin >> arr[i];
+        cin >> k;
 
-    dijkstra(1,adj,dinit);
-    dijkstra(n, adjinvert, df);
-
-    ll soma = LONG_LONG_MAX;
-    for(auto aresta : arestas){
-        ll daresta = aresta[0];
-        ll iaresta = aresta[1];
-        ll faresta = aresta[2];
-        if(dinit[iaresta] != LONG_LONG_MAX && df[faresta] != LONG_LONG_MAX){
-            ll costaresta = dinit[iaresta] + df[faresta] + (daresta/2) ;
-            soma = min(soma , costaresta);
+        ans.pb(0);
+        for (ll i = 0; i < 10; i++) {
+            if(!flag){
+                solve(arr, 0,i);
+                if(flag) ans[0] = i;
+            }
         }
+        if(flag) for (ll i = 0; i < ans.size(); i++) cout << ans[i] << " ";
+        else cout << -1;
+        cout << endl;
+
     }
-
-    cout << soma << endl;
-
     return 0;
 }
