@@ -1,28 +1,9 @@
-#include <algorithm>
-#include <iostream>
-#include <set>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    char c; cin >> c;
+    if(static_cast<long long>(c) == 65) cout << "sim" << endl;
 
-int main() {
-	int n, k;
-	cin >> n >> k;
-	vector<pair<int, int>> v(n);
-	for (int i = 0; i < n; i++)  
-		cin >> v[i].second >> v[i].first;
-	sort(begin(v), end(v));
-
-	int maxMovies = 0;
-	multiset<int> end_times;
-	for (int i = 0; i < k; ++i) end_times.insert(0);
-
-	for (int i = 0; i < n; i++) {
-		auto it = end_times.upper_bound(v[i].second);
-		if (it == begin(end_times)) continue;
-		end_times.erase(--it);
-		end_times.insert(v[i].first);
-		++maxMovies;
-	}
-
-	cout << maxMovies;
 }

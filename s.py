@@ -1,17 +1,25 @@
-# t = int(input()
-for _ in range (int(input())):
-    n,k = [int(x) for x in input().split()]
-    nums = [int(x) for x in input().split()]
-    out = 10e5
+def solve():
+    n = int(input())
+    seg = [list(map(int, input().split())) for x in range(n)]
 
-    for i in range(n):
-        resto = nums[i] % k
-        esse = 0
-        if resto != 0:
-            esse = k - resto
-        # if nums[i] >= k:
-        if esse < out: out = esse
-        # else:
-        #     if resto < out: out = resto
-    
-    print(out)
+    def check(k):
+        ll, rr = 0, 0
+        for e in seg:
+            ll = max(ll - k, e[0])
+            rr = min(rr + k, e[1])
+            if ll > rr:
+                return False
+        return True
+
+    l, r = -1, 10 ** 9
+    while r - l > 1:
+        mid = (r + l) // 2
+        if check(mid):
+            r = mid
+        else:
+            l = mid
+    print(r)
+
+
+for _ in range(int(input())):
+    solve()

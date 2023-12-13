@@ -1,31 +1,20 @@
-a,b = [int(x) for x in input().split()]
-flag = False
-ans = []
+import math
 
-for i in range(10):
-    if flag: break
-    ans = [a] 
-    soma = a
-    for j in range(i):
-        soma = (10*soma) + 1
-        ans.append(soma)
-        if soma == b:
-            flag = True
-            break
-        if soma > b:
-            break
-    if flag: break
-    while soma < b:
-        soma *= 2
-        ans.append(soma)
-        if soma == b:
-            flag = True
-            break
+for _ in range(int(input())):
+    flag = False
+    crescente = True
+    n = int(input())
+    arr = [int(x) for x in input().split()]
 
+    for i in range(1, len(arr)):
+        if arr[i] < arr[i-1]: crescente = False
 
-if flag:
-    print("YES")
-    print(len(ans))
-    print(*ans,sep= " ")
-else:
-    print("NO")
+    if (crescente): print("YES")
+
+    else:
+        for i in range(2, 5):
+            if(flag): break
+            for j in range(int(math.pow(2,i-1)), int(math.pow(2,i)-1)):
+                if(flag): break
+                if(j >= n): break
+                if(arr[j] > arr[j+1]): flag = True
