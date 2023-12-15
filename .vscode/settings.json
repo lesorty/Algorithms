@@ -76,6 +76,7 @@
     "initializer_list": "cpp",
     "regex": "cpp",
     "valarray": "cpp",
-    "cmath": "cpp"
+    "cmath": "cpp",
+    "iosfwd": "cpp"
   }
 }
