@@ -1,3 +1,4 @@
 .cph
-.vscode
+.vscode/
 output/
+quests/
