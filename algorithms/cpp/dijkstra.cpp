@@ -64,7 +64,7 @@ int main() {
         }
     }
 
-    if(pais[n] == 0){
+    if(pais[n] == 0){   
         cout << -1 << endl;
     }
 
