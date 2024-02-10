@@ -77,6 +77,8 @@
     "regex": "cpp",
     "valarray": "cpp",
     "cmath": "cpp",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "bitset": "cpp",
+    "utility": "cpp"
   }
 }
