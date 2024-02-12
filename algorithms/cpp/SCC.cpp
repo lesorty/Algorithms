@@ -10,11 +10,11 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 ll const mod = 1e9 + 7;
 
-vector<vector<int>> adj, adj_rev;
+vector<vector<ll>> adj, adj_rev;
 vector<bool> used;
-vector<int> order, component;
+vector<ll> order, component;
 
-void dfs1(int v) {
+void dfs1(ll v) {
     used[v] = true;
 
     for (auto u : adj[v])
@@ -24,7 +24,7 @@ void dfs1(int v) {
     order.push_back(v);
 }
 
-void dfs2(int v) {
+void dfs2(ll v) {
     used[v] = true;
     component.push_back(v);
 
@@ -34,30 +34,48 @@ void dfs2(int v) {
 }
 
 
-int main(){
-    int n; cin >> n;
+ll main(){
+    ll n; cin >> n;
 
     for (;;) {
-        int a, b; cin >> a >> b;
+        ll a, b; cin >> a >> b;
         adj[a].push_back(b);
         adj_rev[b].push_back(a);
     }
 
     used.assign(n, false);
 
-    for (int i = 0; i < n; i++)
+    for (ll i = 0; i < n; i++)
         if (!used[i])
             dfs1(i);
 
     used.assign(n, false);
     reverse(order.begin(), order.end());
+    vector<ll> roots(n, 0);
+    vector<ll> root_nodes;
+    vector<vector<ll>> adj_scc(n);
 
     for (auto v : order)
         if (!used[v]) {
-            dfs2 (v);
-            
+            dfs2(v);
+
+            ll root = component.front();
+            for (auto u : component) roots[u] = root;
+            root_nodes.push_back(root);
+
             component.clear();
         }
+
+
+    for (ll v = 0; v < n; v++)
+        for (auto u : adj[v]) {
+            ll root_v = roots[v],
+                root_u = roots[u];
+
+            if (root_u != root_v)
+                adj_scc[root_v].push_back(root_u);
+        }
+
 
     return 0;
 }
