@@ -10,17 +10,40 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 ll const mod = 1e9 + 7;
 
-vector<vector<ll>> adj;
+void factor(ll n, set<ll> &s, ll r){
+    for(ll i = 1; i * i <= n; i++){
+        if(n % i == 0){
+            ll a = i, b = n/i;
+
+            ll fac1 = (a+2)/2, fac2 = (b+2)/2;
+            if(a % 2 == 0 && fac1 > 1 && fac1 >= r) s.insert(fac1);
+            if(b % 2 == 0 && fac2 > 1 && fac2 >= r) s.insert(fac2);
+        }
+
+    }
+}
+
+
+void solve(){
+    ll n, x; cin >> n >> x;
+
+    set<ll> s;
+
+    factor(n-x, s, x);
+    factor(n+x-2, s , x);
+
+    cout << s.size() << endl;
+
+}
 
 int main() { 
     ios::sync_with_stdio(0);
     cin.tie(0);     
+    cout.tie(0);
 
-    ll n, m; cin >> n >> m;
+    ll t; cin >> t;
 
-    adj.assing(n+1,{});
-
-    rep(i,0,)
+    while(t--) solve();
 
     return 0;
 }
