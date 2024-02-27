@@ -11,64 +11,53 @@ using namespace std;
 ll const mod = 1e9 + 7;
 ll const maxn = 1e5;
 
-ll t[4*maxn+1];
+ll seg[4*maxn];
 
-void build(ll a[], ll v, ll tl, ll tr) {
-    if (tl == tr) {
-        t[v] = a[tl];
-    } else {
-        ll tm = (tl + tr) / 2;
-        build(a, v*2, tl, tm);
-        build(a, v*2+1, tm+1, tr);
-        t[v] = t[v*2] + t[v*2+1];
-    }
+void build(ll arr[], ll id, ll l , ll r){
+    if(l == r) {seg[id] = arr[l]; return;}
+
+    ll mid = (l + r) / 2;
+
+    build(arr, 2*id, l, mid);
+    build(arr, 2*id+1, mid+1, r);
+    seg[id] = seg[2*id] + seg[2*id+1];
 }
 
-ll sum(ll v, ll tl, ll tr, ll l, ll r) {
-    if (l > r) 
-        return 0;
-    if (l == tl && r == tr) {
-        return t[v];
-    }
-    ll tm = (tl + tr) / 2;
-    return sum(v*2, tl, tm, l, min(r, tm))
-           + sum(v*2+1, tm+1, tr, max(l, tm+1), r);
+void update(ll id, ll l, ll r, ll pos, ll nwv){
+    if(l == r){seg[id] = nwv; return;}
+
+    ll mid = (l + r) / 2;
+    if(pos <= mid) update(2*id, l, mid, pos, nwv);
+    else update(2*id+1, mid+1, r, pos, nwv);
+
+    seg[id] = seg[2*id] + seg[2*id+1];
 }
 
-void update(ll v, ll tl, ll tr, ll pos, ll new_val) {
-    if (tl == tr) {
-        t[v] = new_val;
-    } else {
-        ll tm = (tl + tr) / 2;
-        if (pos <= tm)
-            update(v*2, tl, tm, pos, new_val);
-        else
-            update(v*2+1, tm+1, tr, pos, new_val);
-        t[v] = t[v*2] + t[v*2+1];
-    }
-}
+ll sum(ll id, ll lt, ll rt, ll l, ll r){
+    if(lt > r || rt < l) return 0;
+    if(rt <= r && lt >= l) return seg[id];
 
+    ll mid = (lt+rt) / 2;
+    return sum(2*id, lt, mid, l,r) + sum(2*id+1, mid+1, rt, l, r);
+}
 
 int main () {
     ll n,m; cin >> n >> m;
 
     ll arr[n];
     rep(i,0,n) cin >> arr[i];
-    build(arr, 1, 0, n-1);
-
+    build(arr,1,0,n-1);     
 
     rep(i,0,m){
         ll typ; cin >> typ;
         if(typ == 1){
             ll idx, v; cin >> idx >> v;
-
             update(1, 0, n-1, idx, v);
         }
 
         else if(typ ==2){
             ll l,r; cin >> l >> r;
-
-            cout << sum(1,0,n-1, l, r) << endl;
+            cout << sum(1, 0, n-1, l, r-1) << endl;
         }
     }
 
