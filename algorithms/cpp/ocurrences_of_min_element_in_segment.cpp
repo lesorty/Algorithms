@@ -23,7 +23,7 @@ pair<ll,ll> combine(pair<ll,ll> a, pair<ll,ll> b){
 
 
 void build(ll a[], ll id, ll l, ll r){
-    if(l == r) seg[id] = make_pair(a[l],1);
+    if(l == r) seg[id] = {a[l],1};
     else{
         ll mid = (l+r)/2;
         build(a,2*id,l,mid);
@@ -38,7 +38,7 @@ void build(ll arr[]) {
 
 
 pair<ll,ll> query(ll id, ll segl, ll segr, ll l, ll r){
-    if(segl > r || segr < l) return make_pair(LONG_LONG_MIN, 0);
+    if(segl > r || segr < l) return {LONG_LONG_MAX, 0};
     if(segr <= r && segl >= l) return seg[id];
 
     ll mid = (segl+segr) / 2;
@@ -53,13 +53,13 @@ pair<ll,ll> query(ll l, ll r){
 }
 
 void update(ll id, ll l, ll r, ll pos, ll newv){
-    if(l == r) seg[id] = make_pair(newv,1);
+    if(l == r) {seg[id] = {newv,1}; return;}
 
-    ll mid = (l+r)/2;
+    ll mid = (l + r) / 2;
     if(pos <= mid) update(id*2, l, mid, pos, newv);
-    else update(id*2+1, mid+1, r, pos, newv);
+    else update(2*id+1, mid+1, r, pos, newv);
 
-    seg[id] = combine(seg[id*2], seg[id*2+1]);
+    seg[id] = combine(seg[id*2], seg[2*id+1]);
 }
 
 void update(ll pos, ll newv){

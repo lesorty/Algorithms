@@ -33,7 +33,6 @@ void dfs2(ll v) {
             dfs2(u);
 }
 
-
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);     

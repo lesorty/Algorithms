@@ -7,8 +7,7 @@ using namespace std;
 #define rep(i, a, b) for(ll i = (a); i < (b); i++)
 #define sorta(arr) sort((arr).begin(), (arr).end())
 #define sz(x) x.size()
-#define fastio ios::sync_with_stdio(0); cin.tie(0);cout.tie(0)
-#define all(x) (x).begin(), (x).end() 
+#define all(x) (x).begin(), (x).end()
 ll const mod = 1e9 + 7;
 ll const MAX = 107;
 
@@ -44,39 +43,13 @@ struct LineContainer : multiset<Line, less<>> {
     // to make min queries, k = -k, m = -m, return -query(x)
 };
 
-void solventc(){
-    ll n; cin >> n;
-    vector<vector<ll>> retangulo(n, vector<ll>(3));
-    rep(i,0,n){
-        ll x,y,z; cin >> x >> y >> z;
-        retangulo[i][0] = x; retangulo[i][1] = y; retangulo[i][2] = z;
-    }
-    sort(all(retangulo));
-
-    LineContainer cht;
-    cht.add(0,0);
-    ll dp[n] = {0};
-
-    rep(i,0,n){
-        dp[i] = cht.query(retangulo[i][1]) + retangulo[i][0]*retangulo[i][1] - retangulo[i][2];
-        cht.add(-retangulo[i][0], dp[i]);
-    }
-
-    ll out = 0;
-    rep(i,0,n){
-        out = max(out, dp[i]);
-    }
-
-    cout << out << endl;
-}
-
 
 int main(){
-    fastio;
+    ios::sync_with_stdio(0);
+    cin.tie(0);     
+    cout.tie(0);
 
-    // ll t; cin >> t;
-    // while(t--) 
-    solventc();
+    ll t; cin >> t;
 
     return 0;
 }
