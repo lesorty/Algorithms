@@ -13,7 +13,6 @@ ll const mod = 1e9 + 7;
 ll const MAX = 107;
 
 
-
 struct FlowEdge {
     ll v, u;
     ll cap, flow = 0;
@@ -101,34 +100,15 @@ struct Dinic {
 int main(){
     fastio;
 
-    string s; cin >> s;
-    ll letras[27] = {0};
-    for(auto c : s) letras[c - 'a']++;
-    ll n; cin >> n;
-    Dinic d(n+28,0, n+27);
+    ll n,m;  cin >> n >> m;
+    Dinic dnt(n,0,n-1);
 
-    rep(i,1,n+1){
-        d.add_edge(0,i,1);
+    rep(i,0,m){
+        ll x,y,z; cin >> x >> y >> z;
+        dnt.add_edge(x-1,y-1,z);
     }
 
-    rep(i,0,26){
-        d.add_edge(n + i+1, n+27, letras[i]);
-    }
-
-    rep(i,1,n+1){
-        rep(j,0,6){
-            char c; cin >> c;
-            if(c >= 'a' && c <= 'z'){
-                d.add_edge(i,n+c-'a'+1,1);
-            }
-        }
-    }
-    
-    ll flow = d.flow();
-
-    if(flow == s.size()) cout << "YES" << endl;
-    else cout << "NO" << endl;
-
+    cout << dnt.flow() << endl;
 
     return 0;
 }
