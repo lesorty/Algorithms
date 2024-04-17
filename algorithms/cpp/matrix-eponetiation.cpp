@@ -12,17 +12,12 @@ using namespace std;
 ll const mod = 1e9 + 7;
 ll const MAX = 107;
 
-// matrix<int, 2> fib;
-// fib.a = {{ {{1, 1}}, {{1, 0}} }};
-
 template<typename T, int N> struct matrix {
     array<array<T, N>, N> a{};
     matrix operator * (const matrix &o) const {
         matrix ans;
-        rep(i, 0, N) rep(j, 0, N) rep(k, 0, N){
-            ans.a[i][j] += (((a[i][k] % mod) * (o.a[k][j] % mod) % mod));
-            ans.a[i][j] %= mod;
-        }
+        rep(i, 0, N) rep(j, 0, N) rep(k, 0, N)
+            ans.a[i][j] += a[i][k] * o.a[k][j];
         return ans;
     }
     matrix operator ^ (ll e) const {
@@ -37,44 +32,41 @@ template<typename T, int N> struct matrix {
     }
     vector<T> operator * (const vector<T> &o) const {
         vector<T> ans(N);
-        rep(i, 0, N) rep(j, 0, N) {
-            ans[i] += ((a[i][j] % mod) * (o[j] % mod) % mod);
-            ans[i] %= mod;
-        }
+        rep(i, 0, N) rep(j, 0, N) ans[i] += a[i][j] * o[j];
         return ans;
     }
 };
 
-bool can(ll x, ll y){
-    
+bool can(ll i, ll j){
+    return(i >= 0 && i < 8 && j >= 0 && j < 8);
 }
 
 
-int main (){
+int main(){
     fastio;
 
-    ll n,m,k; cin >> n >> m >> k;
-    matrix<ll,9> grid;
-    vector<vector<ll>> adj(65);
+    unsigned int k; cin >> k;
+    matrix<unsigned int,65> grid;
 
-    grid.a[64][0] = 1;
-    grid.a[64][64] = 1;
-    
+    rep(i,0,65) grid.a[i][64]++;
+
     rep(i,0,8){
         rep(j,0,8){
-            if(can (i+2, j+1)) grid.a[i+2][j+1]++;
-            if (can (i+1,j+2)) grid.a[i+1][j+2]++;
-            if(can (i+2,j-1)) grid.a[i+2][j-1]++;
-            if(can (i+1,j-2)) grid.a[i+1][j-2]++;
-            if(can (i-1,j+2)) grid.a[i-1][j+2]++;
-            if(can (i-2,j+1)) grid.a[i-2][j+1]++;
-            if(can(i-2,j-1)) grid.a[i-2][j-1]++;
-            if(can (i-1,j-2)) grid.a[i-1][j-2]++;
+            ll cur = 8*i+j;
+            if(can(i+2, j+1)) grid.a[cur][8*(i+2)+j+1]++;
+            if(can(i+1,j+2)) grid.a[cur][8*(i+1)+j+2]++;
+            if(can(i+2,j-1)) grid.a[cur][8*(i+2)+j-1]++;
+            if(can(i+1,j-2)) grid.a[cur][8*(i+1)+j-2]++;
+            if(can(i-1,j+2)) grid.a[cur][8*(i-1)+j+2]++;
+            if(can(i-2,j+1)) grid.a[cur][8*(i-2)+j+1]++;
+            if(can(i-2,j-1)) grid.a[cur][8*(i-2)+j-1]++;
+            if(can(i-1,j-2)) grid.a[cur][8*(i-1)+j-2]++;
         }
     }
 
-    
+    grid = grid ^ (k+1);
+    unsigned int out = grid.a[0][64];
 
-    
+    cout << out << endl;
     return 0;
 }
