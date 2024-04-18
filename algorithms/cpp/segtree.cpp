@@ -1,65 +1,50 @@
 #include <bits/stdc++.h>
+#define endl '\n'
+#define rep(i, begin, end) for (int i = begin; i < end; i++)
+typedef long long ll;
 using namespace std;
-#define ll long long
-#define vll vector<long long>
 #define pb push_back
-#define endl "\n"
-#define rep(i, a, b) for(ll i = (a); i < (b); i++)
-#define sorta(arr) sort((arr).begin(), (arr).end())
-#define sz(x) x.size()
-#define all(x) (x).begin(), (x).end()
-ll const mod = 1e9 + 7;
-ll const maxn = 1e5;
 
-ll seg[4*maxn];
-
-void build(ll arr[], ll id, ll l , ll r){
-    if(l == r) {seg[id] = arr[l]; return;}
-
-    ll mid = (l + r) / 2;
-
-    build(arr, 2*id, l, mid);
-    build(arr, 2*id+1, mid+1, r);
-    seg[id] = seg[2*id] + seg[2*id+1];
-}
-
-void update(ll id, ll l, ll r, ll pos, ll nwv){
-    if(l == r){seg[id] = nwv; return;}
-
-    ll mid = (l + r) / 2;
-    if(pos <= mid) update(2*id, l, mid, pos, nwv);
-    else update(2*id+1, mid+1, r, pos, nwv);
-
-    seg[id] = seg[2*id] + seg[2*id+1];
-}
-
-ll sum(ll id, ll lt, ll rt, ll l, ll r){
-    if(lt > r || rt < l) return 0;
-    if(rt <= r && lt >= l) return seg[id];
-
-    ll mid = (lt+rt) / 2;
-    return sum(2*id, lt, mid, l,r) + sum(2*id+1, mid+1, rt, l, r);
-}
-
-int main () {
-    ll n,m; cin >> n >> m;
-
-    ll arr[n];
-    rep(i,0,n) cin >> arr[i];
-    build(arr,1,0,n-1);     
-
-    rep(i,0,m){
-        ll typ; cin >> typ;
-        if(typ == 1){
-            ll idx, v; cin >> idx >> v;
-            update(1, 0, n-1, idx, v);
+template<class T> struct seg_tree {
+    struct node {
+        T x;
+        node() : x(0) {}
+        node(T x) : x(x) {}
+        node operator + (const node &o) const {
+            return node(x + o.x);
         }
+    };
+    int n;
+    vector<node> tree;
+    seg_tree(int n) : n(n), tree(n * 4) {}
 
-        else if(typ ==2){
-            ll l,r; cin >> l >> r;
-            cout << sum(1, 0, n-1, l, r-1) << endl;
+    inline int left(int id) { return (id << 1); }
+    inline int right(int id) { return (id << 1) | 1; }
+
+    void update(int id, int l, int r, int pos, T val) {
+        if (l == r) tree[id] = node(val);
+        else {
+            int mid = (l + r) >> 1;
+            if (pos <= mid) update(left(id), l, mid, pos, val);
+            else update(right(id), mid + 1, r, pos, val);
+            tree[id] = tree[left(id)] + tree[right(id)];
         }
     }
+
+    node query(int id, int l, int r, int lq, int rq) {
+        if (l > rq || r < lq) return node();
+        if (lq <= l && r <= rq) return tree[id];
+        int mid = (l + r) >> 1;
+        return query(left(id), l, mid, lq, rq) + query(right(id), mid + 1, r, lq, rq);
+    }
+
+    void update(int pos, T val) { update(1, 0, n - 1, pos, val); }
+    node query(int l, int r) { return query(1, 0, n - 1, l, r); }
+};
+int main () {
+    ios::sync_with_stdio(0); cin.tie(0);cout.tie(0);
+
+    ll n,m; cin >> n >> m;
 
     return 0;
 }
