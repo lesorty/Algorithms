@@ -10,9 +10,6 @@ typedef vector<double> vd;
 typedef vector<int> vi;
 typedef vector<ll> vl;
 
-const int MOD = 1009;
-const int MAX = 2e5 + 7;
-
 void fft(vector<C> &a)
 {
     int n = a.size(), L = 31 - __builtin_clz(n);
@@ -87,9 +84,52 @@ vd convMod(const vd &a, const vd &b)
     return res;
 }
 
-int main() {
-    string s; cin >> s;
+const int MOD = 1009;
+const int MAX = 2e5 + 3;
+vd freq[MAX];
 
+priority_queue<pair<int, vd>> f;
+
+
+int main() {
+    ll n,m,k; cin >> n >> m >> k;
+
+    vd f[MAX];
+    priority_queue<pair<ll,vd>> pq;
     
-    return 0;
+    rep(i,1,m+1) f[i].pb(1);
+
+    rep(i,0,n){
+        ll x; cin >> x;
+        f[x].pb(1);
+    }
+
+    rep(i,1,n+1){
+        if(!f[i].empty()){
+            pq.push({(-1*(f[i].size())), f[i]});
+        }
+    }
+
+    vd aux;
+
+    while (true) {
+        if (pq.size() == 1) break;
+
+        ll t1 = pq.top().first;
+        vd fr1 = pq.top().second;
+        pq.pop();
+
+        ll t2 = pq.top().first;
+        vd fr2 = pq.top().second;
+        pq.pop();
+
+        aux = convMod<MOD>(fr1, fr2);
+
+        pq.push({-aux.size(), aux});
+    }
+
+    ll t = pq.top().first;
+    vd v = pq.top().second;
+    pq.pop();
+    cout << v[k] << "\n";
 }

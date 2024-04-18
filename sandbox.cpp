@@ -12,11 +12,21 @@ using namespace std;
 ll const mod = 1e9 + 7;
 ll const MAX = 107;
 
+vector<ll> digits;
+void getdigits(ll x)
+{
+    while(x){
+        ll temp = x % 10;
+        digits.pb(temp);
+        x /= 10;
+    }
+    reverse(digits.begin(), digits.end());
+
+}
+
 int main(){
     fastio;
-    
-    ll x; cin >> x;
 
-    cout << "ABC" << x << endl;
+    
     return 0;
 }

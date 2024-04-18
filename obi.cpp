@@ -1,193 +1,148 @@
 #include <bits/stdc++.h>
-
+#define endl '\n'
+#define rep(i, begin, end) for (int i = begin; i < end; i++)
+typedef long long ll;
 using namespace std;
 
-#define ll long long
-#define endl "\n"
+typedef complex<double> C;
+typedef vector<double> vd;
+typedef vector<int> vi;
+typedef vector<ll> vl;
 
-struct FlowEdge {
-    int v, u;
-    long long cap, flow = 0;
-    FlowEdge(int v, int u, long long cap) : v(v), u(u), cap(cap) {}
-};
-
-struct Dinic {
-    const long long flow_inf = 1e18;
-    vector<FlowEdge> edges;
-    vector<vector<int> > adj;
-    int n, m = 0;
-    int s, t;
-    vector<int> level, ptr;
-    queue<int> q;
-
-    Dinic(int n, int s, int t) : n(n), s(s), t(t) {
-        adj.resize(n);
-        level.resize(n);
-        ptr.resize(n);
+void fft(vector<C> &a)
+{
+    int n = a.size(), L = 31 - __builtin_clz(n);
+    static vector<complex<long double>> R(2, 1);
+    static vector<C> rt(2, 1); // (^ 10% faster if double)
+    for (static int k = 2; k < n; k *= 2)
+    {
+        R.resize(n);
+        rt.resize(n);
+        auto x = polar(1.0L, acos(-1.0L) / k);
+        rep(i, k, 2 * k) rt[i] = R[i] = i & 1 ? R[i / 2] * x : R[i / 2];
     }
-
-    void add_edge(int v, int u, long long cap) {
-        FlowEdge e1(v, u, cap);
-        FlowEdge e2(u, v, 0);
-        edges.push_back(e1);
-        edges.push_back(e2);
-        adj[v].push_back(m);
-        adj[u].push_back(m + 1);
-        m += 2;
-    }
-
-    bool bfs() {
-        while (!q.empty()) {
-            int v = q.front();
-            q.pop();
-            for (int id : adj[v]) {
-                if (edges[id].cap - edges[id].flow < 1)
-                    continue;
-                if (level[edges[id].u] != -1)
-                    continue;
-                level[edges[id].u] = level[v] + 1;
-                q.push(edges[id].u);
+    vi rev(n);
+    rep(i, 0, n) rev[i] = (rev[i / 2] | (i & 1) << L) / 2;
+    rep(i, 0, n) if (i < rev[i]) swap(a[i], a[rev[i]]);
+    for (int k = 1; k < n; k *= 2)
+        for (int i = 0; i < n; i += 2 * k)
+            rep(j, 0, k)
+            {
+                // C z = rt[j+k] * a[i+j+k]; // (25% faster if hand-rolled)  /// include-line
+                auto x = (double *)&rt[j + k], y = (double *)&a[i + j + k]; /// exclude-line
+                C z(x[0] * y[0] - x[1] * y[1], x[0] * y[1] + x[1] * y[0]);  /// exclude-line
+                a[i + j + k] = a[i + j] - z;
+                a[i + j] += z;
             }
-        }
-        return level[t] != -1;
+}
+
+vi conv(const vi &a, const vi &b)
+{
+    if (a.empty() || b.empty())
+        return {};
+    vi res(a.size() + b.size() - 1);
+    int L = 32 - __builtin_clz(res.size()), n = 1 << L;
+    vector<C> in(n), out(n);
+
+    copy(a.begin(), a.end(), in.begin());
+    rep(i, 0, b.size()) in[i].imag(b[i]);
+
+    fft(in);
+    for (C &x : in)
+        x *= x;
+    rep(i, 0, n) out[i] = in[-i & (n - 1)] - conj(in[i]);
+    fft(out);
+    rep(i, 0, res.size()) res[i] = imag(out[i]) / (4 * n);
+    return res;
+}
+
+template <int M>
+vd convMod(const vd &a, const vd &b)
+{
+    if (a.empty() || b.empty())
+        return {};
+    vd res(a.size() + b.size() - 1);
+    int B = 32 - __builtin_clz(res.size()), n = 1 << B, cut = int(sqrt(M));
+    vector<C> L(n), R(n), outs(n), outl(n);
+    rep(i, 0, a.size()) L[i] = C((int)a[i] / cut, (int)a[i] % cut);
+    rep(i, 0, b.size()) R[i] = C((int)b[i] / cut, (int)b[i] % cut);
+    fft(L), fft(R);
+    rep(i, 0, n)
+    {
+        int j = -i & (n - 1);
+        outl[j] = (L[i] + conj(L[j])) * R[i] / (2.0 * n);
+        outs[j] = (L[i] - conj(L[j])) * R[i] / (2.0 * n) / 1i;
+    }
+    fft(outl), fft(outs);
+    rep(i, 0, res.size())
+    {
+        ll av = ll(real(outl[i]) + .5), cv = ll(imag(outs[i]) + .5);
+        ll bv = ll(imag(outl[i]) + .5) + ll(real(outs[i]) + .5);
+        res[i] = ((av % M * cut + bv) % M * cut + cv) % M;
+    }
+    return res;
+}
+
+const int MOD = 1009;
+const int MAX = 2e5 + 3;
+vd freq[MAX];
+
+priority_queue<pair<int, vd>> f;
+
+void resolve()
+{
+    int n, m, k;
+    cin >> n >> m >> k;
+
+    rep(i, 1, m + 1)
+    {
+        freq[i].push_back(1);
     }
 
-    long long dfs(int v, long long pushed) {
-        if (pushed == 0)
-            return 0;
-        if (v == t)
-            return pushed;
-        for (int& cid = ptr[v]; cid < (int)adj[v].size(); cid++) {
-            int id = adj[v][cid];
-            int u = edges[id].u;
-            if (level[v] + 1 != level[u] || edges[id].cap - edges[id].flow < 1)
-                continue;
-            long long tr = dfs(u, min(pushed, edges[id].cap - edges[id].flow));
-            if (tr == 0)
-                continue;
-            edges[id].flow += tr;
-            edges[id ^ 1].flow -= tr;
-            return tr;
-        }
-        return 0;
+    rep(i, 0, n)
+    {
+        int cor;
+        cin >> cor;
+        freq[cor].push_back(1);
     }
 
-    long long flow() {
-        long long f = 0;
-        while (true) {
-            fill(level.begin(), level.end(), -1);
-            level[s] = 0;
-            q.push(s);
-            if (!bfs())
-                break;
-            fill(ptr.begin(), ptr.end(), 0);
-            while (long long pushed = dfs(s, flow_inf)) {
-                f += pushed;
-            }
-        }
-        return f;
+    rep(i, 1, n + 1)
+    {
+        if (!freq[i].empty())
+            f.push(make_pair(-freq[i].size(), freq[i]));
     }
-};
 
-int main(){
+    vd aux;
+
+    while (true)
+    {
+        if (f.size() == 1) break;
+
+        ll t1 = f.top().first;
+        vd fr1 = f.top().second;
+        f.pop();
+
+        ll t2 = f.top().first;
+        vd fr2 = f.top().second;
+        f.pop();
+
+        aux = convMod<MOD>(fr1, fr2);
+
+        f.push({-aux.size(), aux});
+    }
+
+    ll t = f.top().first;
+    vd v = f.top().second;
+    f.pop();
+    cout << v[k] << "\n";
+
+}
+
+int main()
+{
     ios::sync_with_stdio(0);
     cin.tie(0);
-    cout.tie(0);
 
-    while(1){
-        ll n, m, k; cin >> n >> m >> k;
-
-        if(n == 0) break;
-        ll faltaPt = (((n-1)*(n-2))/2); faltaPt *= m;
-        ll pontuacao[n]; memset(pontuacao, 0, sizeof pontuacao);
-        Dinic d(faltaPt+n+2, 0, faltaPt+n+1);
-        ll qntpt = 0, qntptZ = 0;
-        ll auxZero = (n-1)*m*2;
-        queue<pair<ll,ll>> jogos;
-        ll arestas[n][n];
-        for(ll i = 0; i < n; i++){
-            for(ll j = 0; j < n; j++){
-                arestas[i][j] = 0;
-            }
-        }
-
-        for(ll i = 0; i < k; i++){
-            ll a, b; char c;
-
-            cin >> a >> c >> b;
-            qntpt++;
-            if(a == 0 || b == 0) {
-                auxZero-=2;
-            }
-            else{
-                qntptZ++;
-                arestas[a][b]++;
-                arestas[b][a]++;
-            }
-            if(c == '<'){
-                pontuacao[b]+= 2;
-            }
-            else if(c == '>'){
-                pontuacao[a]+= 2;
-            }
-            else{
-                pontuacao[a] += 1; 
-                pontuacao[b] += 1;
-            }
-        }
-        ll capacidade = pontuacao[0]+auxZero;
-        ll teste = faltaPt - qntptZ;
-        ll flag = 0;
-
-        for(ll i = 1; i < n; i++){
-            for(ll j = 1; j < n; j++){
-                if(i != j){
-                    while(m-arestas[i][j]){
-                        jogos.push({i, j});
-                        arestas[i][j]++;
-                        arestas[j][i]++;
-                    }
-                }
-                
-            }
-        }
-        ll res = 0;
-
-        for(ll i = 1; i <= teste;i++){
-            d.add_edge(0, i, 2);
-        }
-
-        for(ll i = 1; i < n; i++){
-            if(capacidade-pontuacao[i]-1 < 0){
-                flag = 1;   
-                break;
-            }
-            d.add_edge(i+teste , faltaPt+n+1, capacidade-pontuacao[i]-1);    
-            //cout <<"x " << capacidade-pontuacao[i]-1 << endl;
-
-        }
-
-        if(flag ){
-            cout << "N" << endl; continue;
-        }
-        ll i = 1;
-        //cout << faltaPt << endl;
-        while(!jogos.empty()){
-            ll a = jogos.front().first;
-            ll b = jogos.front().second;
-            jogos.pop();
-            d.add_edge(i, a+teste, 2);
-            d.add_edge(i, b+teste, 2); 
-            i++;     
-        }
-    
-        //for(ll i = 1; i < n; i++) cout << pontuacao[i] << endl;
-        ll flow = d.flow();
-        if(teste*2 > flow) cout << "N"<< endl;
-        else cout << "Y" << endl;
-        //cout<< flow << endl;
-
-    }
-    
+    resolve();
     return 0;
 }
