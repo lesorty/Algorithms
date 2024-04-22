@@ -13,7 +13,6 @@ using namespace std;
 #define pb push_back
 #define eb emplace_back
 
-
 vector<ll> pai;
 vector<ll> tamanho;
 

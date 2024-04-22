@@ -7,36 +7,14 @@ using namespace std;
 const int MOD = 1009;
 const int MAX = 4e5 + 7;
 
+/* 
+O tamanho maximo de uma segtree deve ser declarado como 4*tamano maximo do array pois é o maximo que ela pode crescer
+build - constroi a segtree. o Id da raiz deve ser inciado como 1
+update - deve ser utilizado (1,0,sz-1, ldesejado, rdesejado -1)
+query msm coisa
+*/
+
 ll sgtr[MAX];
-
-ll next2p(ll x){
-    ll aux = 1;
-    while(aux < x) aux <<= 1;
-    return aux;
-}
-
-void itbuild(ll ax[], ll n){
-    ll n2 = next2p(n);
-
-    rep(i,0,n){
-        sgtr[n2-1+i] = ax[i];
-    }
-    ll dif = n2 - n;
-    rep(i,0,dif){
-        sgtr[n2-1+n+i] = 0;
-    }
-
-    n2/=2;
-    while(n2){
-        rep(i,0,n2){
-            ll pos = n2-1+i;
-            sgtr[pos] = sgtr[2*pos+1] + sgtr[2*pos+2];
-        }
-
-        n2 /= 2;
-    }
-}
-
 void build(ll arr[], ll id, ll l, ll r){
     if(l == r) sgtr[id] = arr[l];
     else{
