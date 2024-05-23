@@ -5,6 +5,8 @@ typedef long long ll;
 using namespace std;
 #define pb push_back
 
+vector<ll> arr;
+
 template<class T> struct seg_tree {
     struct node {
         T x;
@@ -20,6 +22,17 @@ template<class T> struct seg_tree {
 
     inline int left(int id) { return (id << 1); }
     inline int right(int id) { return (id << 1) | 1; }
+
+    void build(int id, int l, int r){
+    if(l == r) tree[id] = node();
+    else{
+        int mid = (l + r) >> 1;
+        build(left(id),l,mid);
+        build(right(id),mid+1,r);
+        tree[id] = tree[left(id)]+tree[right(id)];  
+        }
+    }
+
 
     void update(int id, int l, int r, int pos, T val) {
         if (l == r) tree[id] = node(val);

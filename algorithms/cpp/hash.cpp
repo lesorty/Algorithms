@@ -1,4 +1,4 @@
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
 using namespace std;
 
 #define endl '\n'
@@ -6,7 +6,9 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 #define sz(x) (int)(x).size()
 typedef long long ll;
- 
+
+const int MAX = 2e5 + 7;
+
 mt19937 rng((int) chrono::steady_clock::now().time_since_epoch().count());
 const int NN = 2e6 + 1, K = 2, P = uniform_int_distribution<int>(256, 1e9)(rng); // l > |sigma|, r < min(mod)
 const ll MOD[] = {1000893493, 1013782387};
@@ -32,29 +34,26 @@ struct hsh {
     }
 };
 
-int main(){
+
+int main() {
     pre();
-    string word;
-    cin >> word;
-    
-    string small;
-    cin >> small;
+    string s; cin >> s;
+    string sm; cin >> sm;
 
-    if (small.size() > word.size()){
-        cout << 0 << endl;
-        return 0;
-    }
 
-    hsh hashbig(word);
-    hsh hashsmall(small);
+    if (sm.size() > s.size()){cout << 0 << endl;return 0;}
 
-    int ans = 0;
-    for (int i = 0; i <= word.size() - small.size()+1; i++){
-        if (hashbig(i, i+small.size()-1) == hashsmall(0, small.size()-1)){
-            ans+=1;
+    hsh hashb(s);
+    hsh hashsm(sm);
+
+    ll out = 0;
+    ll tamanho = s.size() - sm.size()+1;
+    rep(i,0,tamanho+1){
+        if(hashb(i, i+sm.size()-1) == hashsm(0, sm.size()-1)){
+            out++;
         }
     }
-    cout << ans;
 
-
-}
+    cout << out;
+    return 0;
+} 

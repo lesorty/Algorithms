@@ -5,28 +5,15 @@ typedef long long ll;
 using namespace std;
 #define pb push_back
 
+vector<ll> arr;
+
 template<class T> struct seg_tree {
     struct node {
-        T open;
-        T close;
-        T seg;
-
-        node() : {
-            this->open = 0;
-            this->close = 0;
-            this->seg = 0;
-        }
-        node(Node nd) : {
-
-        }
-        node(T nopen, T nclose, T nseg) : {
-            this->open = nopen;
-            this->close = nclose;
-            this->seg = nseg;
-        }
+        T x;
+        node() : x(0) {}
+        node(T x) : x(x) {}
         node operator + (const node &o) const {
-            ll match = min(this->open, o.close);
-            return node(o.open + (this->open-match), this->close + (o.close - match), this->seg + o.seg + 2*match);
+            return node(x + o.x);
         }
     };
     int n;
@@ -35,6 +22,17 @@ template<class T> struct seg_tree {
 
     inline int left(int id) { return (id << 1); }
     inline int right(int id) { return (id << 1) | 1; }
+
+    void build(int id, int l, int r){
+    if(l == r) tree[id] = node();
+    else{
+        int mid = (l + r) >> 1;
+        build(left(id),l,mid);
+        build(right(id),mid+1,r);
+        tree[id] = tree[left(id)]+tree[right(id)];  
+        }
+    }
+
 
     void update(int id, int l, int r, int pos, T val) {
         if (l == r) tree[id] = node(val);
@@ -53,34 +51,27 @@ template<class T> struct seg_tree {
         return query(left(id), l, mid, lq, rq) + query(right(id), mid + 1, r, lq, rq);
     }
 
+    void build() {build(1,0,n-1);}
     void update(int pos, T val) { update(1, 0, n - 1, pos, val); }
     node query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
+
 int main () {
     ios::sync_with_stdio(0); cin.tie(0);cout.tie(0);
 
-    string s; cin >> s;
-    ll m; cin >> m;
+    ll n,q; cin >> n >> q;
+    rep(i,0,n) {ll x; cin >> x; arr.pb(x);}
+    seg_tree<ll> s(n*4);  
+    s.build();
 
-    vector<ll[3]> nodes;
-    rep(i,0,s.size()){  
-        char c = s[i];
-        if(c == '('){
-            ll ar[3] = {1,0,0};
-            nodes.pb(ar);
+    rep(i,0,q){
+        ll type, a, b; cin >> type >> a >> b;
+
+        if(type == 1){
+            s.update(a,b);
         }
-        else{
-            ll ar[3] = {0,1,0};
-            nodes.pb(ar);
-        }
-    }
 
-    seg_tree<ll> sgtr(nodes.size());
-
-    rep(i,0,m){
-        ll l,r; cin >> l >> r;
-
-        
+        if(type == 2) cout << (s.query(a,b).x) << endl;
     }
 
     return 0;
