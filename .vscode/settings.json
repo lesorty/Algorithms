@@ -128,5 +128,6 @@
     "typeindex": "cpp",
     "typeinfo": "cpp",
     "stacktrace": "cpp"
-  }
+  },
+  "C_Cpp_Runner.msvcSecureNoWarnings": false
 }
