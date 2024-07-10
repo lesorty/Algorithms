@@ -55,13 +55,16 @@ template<class T> struct seg_tree {
         return query(left(id), l, mid, lq, rq) + query(right(id), mid + 1, r, lq, rq);
     }
 
+    void build() {build(1,0,n-1);}
     void update(int pos, T val) { update(1, 0, n - 1, pos, val); }
     node query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
 int main () {
     ios::sync_with_stdio(0); cin.tie(0);cout.tie(0);
 
-    ll n,m; cin >> n >> m
+    ll n;
+
+
 
     return 0;
 }
