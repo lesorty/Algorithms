@@ -38,8 +38,10 @@ template<class T> struct seg_tree {
     void push(ll id, ll l, ll r){
         if(lazy[id]){
             tree[id] = tree[id] + node(lazy[id]*(r-l+1));
-            lazy[left(id)] += lazy[id];
-            lazy[right(id)] += lazy[id];
+            if(l != r){
+                lazy[left(id)] += lazy[id];
+                lazy[right(id)] += lazy[id];
+            }
         }
         lazy[id] = 0;
         return;
