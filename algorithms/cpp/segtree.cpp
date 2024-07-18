@@ -14,9 +14,7 @@ template<class T> struct seg_tree {
         node(T x) : x(x) {}
 
         node operator + (const node &o) const {
-            ll vals[3] = {x, o.x, (x + o.x)};
-            sort(vals, val+3);
-            return node(vals[2]);
+            return node(x + o.x);
         }
 
     };

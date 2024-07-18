@@ -10,17 +10,11 @@ vector<ll> arr;
 template<class T> struct seg_tree {
     struct node {
         T x;
-        ll h;
         node() : x(0) {}
-        node(ll x, ll h) : x(x), h(h) {}
+        node(T x) : x(x) {}
 
         node operator + (const node &o) const {
-            if(h % 2 == 0){
-                return node((x | o.x), h+1);
-            }
-            else{
-                return node((x ^ o.x), h+1);
-            }
+            return node(x + o.x);
         }
 
     };
@@ -31,7 +25,7 @@ template<class T> struct seg_tree {
     inline int left(int id) { return (id << 1); }
     inline int right(int id) { return (id << 1) | 1; }
 
-    void build(int id, int l, int r, ll h){
+    void build(int id, int l, int r){
     if(l == r) tree[id] = node(arr[l]);
     else{
         int mid = (l + r) >> 1;
@@ -59,26 +53,15 @@ template<class T> struct seg_tree {
         return query(left(id), l, mid, lq, rq) + query(right(id), mid + 1, r, lq, rq);
     }
 
+    void build() {build(1,0,n-1);}
     void update(int pos, T val) { update(1, 0, n - 1, pos, val); }
     node query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
 int main () {
     ios::sync_with_stdio(0); cin.tie(0);cout.tie(0);
 
-    ll n,m; cin >> n >> m;
-    ll tam = 1;
-    rep(i,0,n) tam *= 2;
+    ll n;
 
-    seg_tree<ll> sgtr(tam);
-    sgtr.build();
-
-    arr.resize(tam);
-
-    rep(i,0,m){
-        ll x,y; cin >> x >> y;
-
-
-    }
 
 
     return 0;

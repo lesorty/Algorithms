@@ -14,9 +14,7 @@ template<class T> struct seg_tree {
         node(T x) : x(x) {}
 
         node operator + (const node &o) const {
-            ll vals[3] = {x, o.x, (x + o.x)};
-            sort(vals, val+3);
-            return node(vals[2]);
+            return node(x + o.x);
         }
 
     };
@@ -28,7 +26,7 @@ template<class T> struct seg_tree {
     inline int right(int id) { return (id << 1) | 1; }
 
     void build(int id, int l, int r){
-    if(l == r) tree[id] = node(arr[l]);
+    if(l == r) tree[id] = node(1);
     else{
         int mid = (l + r) >> 1;
         build(left(id),l,mid);
@@ -48,28 +46,32 @@ template<class T> struct seg_tree {
         }
     }
 
-    node query(int id, int l, int r, int lq, int rq) {
-        if (l > rq || r < lq) return node();
-        if (lq <= l && r <= rq) return tree[id];
+    node query(int id, int l, int r, int target) {
+        if(l == r) return node(l);
         int mid = (l + r) >> 1;
-        return query(left(id), l, mid, lq, rq) + query(right(id), mid + 1, r, lq, rq);
+        if(tree[left(id)].x >= target) return query(left(id), l, mid, target);
+        return query(right(id), mid + 1, r, target - tree[left(id)].x);
     }
 
     void build() {build(1,0,n-1);}
     void update(int pos, T val) { update(1, 0, n - 1, pos, val); }
-    node query(int l, int r) { return query(1, 0, n - 1, l, r); }
+    int query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
 int main () {
     ios::sync_with_stdio(0); cin.tie(0);cout.tie(0);
 
-    ll n;
-    seg_tree<ll> sgtr(n);
+    ll n; cin >> n;
+    seg_tree<int> sgtr(n);
     sgtr.build();
+    vector<ll> nums(n);
+    rep(i,0,n) cin >> nums[i];
 
     rep(i,0,n){
+        ll cur; cin >> cur;
+        ll idx = sgtr.query(1,0,n-1,cur).x;
 
+        cout << nums[idx] << " ";
     }
-
 
     return 0;
 }
