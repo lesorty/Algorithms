@@ -1,4 +1,4 @@
-#include "../contest/template.cpp"
+#include "../template.cpp"
 
 template<typename T> struct bit {
     int n;
